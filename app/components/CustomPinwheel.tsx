@@ -28,7 +28,7 @@ const CustomPinwheel: React.FC<CustomPinwheelProps> = ({
     const centerY = height / 2;
     const radius = Math.min(centerX, centerY) - 20;
     const angle = (2 * Math.PI) / data.length;
-
+    ctx.font = '16px sans-serif';
     data.forEach((item, index) => {
       ctx.beginPath();
       ctx.moveTo(centerX, centerY);
