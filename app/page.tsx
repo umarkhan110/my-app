@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { Wheel } from 'react-custom-roulette';
+// import { Wheel } from 'react-custom-roulette';
 import Corgi from './components/CorgiAnimation';
+import CustomPinwheel from './components/CustomPinwheel';
 interface OptionData {
   option: string;
   style: {
@@ -68,7 +69,6 @@ export default function Home() {
 
   useEffect(() => {
     if (!mustSpin) {
-      console.log(prizeNumber)
       const category = data[prizeNumber].option;
       setCurrentCategory(category);
       setUserAnswer("");
@@ -88,14 +88,13 @@ export default function Home() {
     <div className="p-6 min-h-screen flex flex-col items-center justify-center bg-black">
       <div className="bg-gray-800 shadow-xl rounded-lg p-6 w-full max-w-lg text-[#41ffca]">
         <div className="text-3xl font-bold flex items-center justify-center mb-6">
-          LA Controller's Trivia Challenge
+          LA Controllers Trivia Challenge
         </div>
         <Corgi score={score}/>
         <div className="flex items-center justify-center mb-4">
           <div className="w-64 h-auto flex justify-center items-center">
-            <Wheel
-              mustStartSpinning={mustSpin}
-              prizeNumber={prizeNumber}
+            <CustomPinwheel
+              mustSpin={mustSpin}
               data={data}
               onStopSpinning={() => setMustSpin(false)}
             />

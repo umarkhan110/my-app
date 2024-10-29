@@ -99,18 +99,26 @@ export async function GET(request: Request, { params }: { params: Params }) {
         { status: 500 }
       );
     }    
-  } catch (error: any) {
-    if (error.name === 'RateLimitError' || error.status === 429) {
-      console.error('Rate limit exceeded:', error);
+  }  catch (error: unknown) {
+    if (error instanceof Error) {
+      // if ((error as any).name === 'RateLimitError' || (error as any).status === 429) {
+      //   console.error('Rate limit exceeded:', error);
+      //   return NextResponse.json(
+      //     { error: 'Rate limit exceeded. Please try again later.' },
+      //     { status: 429 }
+      //   );
+      // }
+      // console.error('Error generating question:', error.message);
       return NextResponse.json(
-        { error: 'Rate limit exceeded. Please try again later.' },
-        { status: 429 }
+        { error: 'An error occurred while generating the question. Please try again later.' },
+        { status: 500 }
+      );
+    } else {
+      console.error('Unknown error:', error);
+      return NextResponse.json(
+        { error: 'An unknown error occurred.' },
+        { status: 500 }
       );
     }
-    console.error('Error generating question:', error);
-    return NextResponse.json(
-      { error: 'An error occurred while generating the question. Please try again later.' },
-      { status: 500 }
-    );
   }
 }
