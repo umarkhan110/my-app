@@ -58,7 +58,7 @@ export default function Home() {
         setCorrectAnswer(result.correctAnswer);
       } else {
         setError(response.statusText);
-        console.error("Failed to fetch question:", response.statusText);
+        console.error("Failed to fetch question:", response);
       }
     } catch (error) {
       console.error("Error fetching question:", error);

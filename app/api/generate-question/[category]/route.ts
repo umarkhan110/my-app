@@ -39,7 +39,7 @@ export async function GET(request: Request, { params }: { params: Params }) {
     if (!response.ok) {
       console.error('Failed to fetch content from the URL:', response.statusText);
       return NextResponse.json(
-        { error: 'Failed to fetch content for the selected category.' },
+        { error: 'Failed to fetch content for the selected category.', response },
         { status: response.status }
       );
     }
