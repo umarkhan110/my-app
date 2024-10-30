@@ -35,7 +35,11 @@ export async function GET(request: Request, { params }: { params: Params }) {
 
   const url = `https://controller.lacity.gov/${encodeURIComponent(urlCategory)}`;
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36',
+      },
+    });
     if (!response.ok) {
       console.error('Failed to fetch content from the URL:', response.statusText);
       return NextResponse.json(
