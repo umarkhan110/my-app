@@ -24,13 +24,10 @@ export default function Corgi({ score }: CorgiProps) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-
     const particles = Array.from({ length: 50 }).map(() => ({
-      x: centerX + (Math.random() - 0.5) * 100, // Centered with slight horizontal variation
-      y: centerY + (Math.random() - 0.5) * 100, // Centered with slight vertical variation
-      size: 30 + Math.random() * 20,
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      size: 30 + Math.random() * 200,
       speed: Math.random() * 2 + 5,
       rotation: Math.random() * 360,
       rotationSpeed: Math.random() * 4,
@@ -70,7 +67,6 @@ export default function Corgi({ score }: CorgiProps) {
     if (score > 0) launchCorgiConfetti();
   }, [score]);
 
-  // Check for window before using it
   const canvasWidth = typeof window !== 'undefined' ? window.innerWidth : 800; // Fallback width
   const canvasHeight = typeof window !== 'undefined' ? window.innerHeight : 600; // Fallback height
 
@@ -78,7 +74,7 @@ export default function Corgi({ score }: CorgiProps) {
     <div className="relative">
       <canvas
         ref={canvasRef}
-        width={canvasWidth}
+    width={canvasWidth}
         height={canvasHeight}
         className="absolute top-0 left-0 pointer-events-none"
       />
