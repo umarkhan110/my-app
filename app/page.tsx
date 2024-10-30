@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect } from 'react';
-// import { Wheel } from 'react-custom-roulette';
 import Corgi from './components/CorgiAnimation';
 import CustomPinwheel from './components/CustomPinwheel';
 interface OptionData {
@@ -80,8 +79,10 @@ export default function Home() {
   const handleSubmit = () => {
     if (userAnswer === correctAnswer?.split(".")[0]) {
       setScore(score + 1);
+      setShowAnswer(true);
+    }else{
+      setError("Wrong answer!")
     }
-    setShowAnswer(true);
   };
 
   return (
