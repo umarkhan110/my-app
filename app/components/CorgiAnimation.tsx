@@ -9,14 +9,12 @@ export default function Corgi({ score }: CorgiProps) {
   const [corgiImage, setCorgiImage] = useState<HTMLImageElement | null>(null);
   const isAnimatingRef = useRef(false);
 
-  // Load the corgi image only once
   useEffect(() => {
     const img = new Image();
     img.src = '/killa.png';
     img.onload = () => setCorgiImage(img);
   }, []);
 
-  // Custom confetti launcher
   const launchCorgiConfetti = () => {
     if (!canvasRef.current || !corgiImage || isAnimatingRef.current) return;
 
@@ -43,7 +41,7 @@ export default function Corgi({ score }: CorgiProps) {
         p.y += p.speed;
         p.rotation += p.rotationSpeed;
 
-        if (p.y < canvas.height) isParticlesActive = true; // Check if any particle is still in view
+        if (p.y < canvas.height) isParticlesActive = true; 
 
         ctx.save();
         ctx.translate(p.x, p.y);
@@ -55,8 +53,8 @@ export default function Corgi({ score }: CorgiProps) {
       if (isParticlesActive) {
         requestAnimationFrame(animate);
       } else {
-        isAnimatingRef.current = false; // Stop the animation once particles are out of view
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+        isAnimatingRef.current = false; 
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
     };
 
@@ -67,15 +65,13 @@ export default function Corgi({ score }: CorgiProps) {
     if (score > 0) launchCorgiConfetti();
   }, [score]);
 
-  const canvasWidth = typeof window !== 'undefined' ? window.innerWidth : 800; // Fallback width
-  const canvasHeight = typeof window !== 'undefined' ? window.innerHeight : 600; // Fallback height
 
   return (
     <div className="relative">
       <canvas
         ref={canvasRef}
-    width={canvasWidth}
-        height={canvasHeight}
+    width={400}
+        height={800}
         className="absolute top-0 left-0 pointer-events-none"
       />
     </div>
