@@ -1,38 +1,80 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface CorgiProps {
   score: number;
 }
 
 export default function Corgi({ score }: CorgiProps) {
-  const [corgiSize, setCorgiSize] = useState(100);
-  const [corgiEating, setCorgiEating] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [corgiImage, setCorgiImage] = useState<HTMLImageElement | null>(null);
+  const isAnimatingRef = useRef(false);
 
-  const handleCorrectAnswer = () => {
-    setCorgiSize((prevSize) => prevSize + 10);
-    setCorgiEating(true);
-    setTimeout(() => setCorgiEating(false), 1000);
+  // Load the corgi image only once
+  useEffect(() => {
+    const img = new Image();
+    img.src = '/killa.png';
+    img.onload = () => setCorgiImage(img);
+  }, []);
+
+  // Custom confetti launcher
+  const launchCorgiConfetti = () => {
+    if (!canvasRef.current || !corgiImage || isAnimatingRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const particles = Array.from({ length: 50 }).map(() => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      size: 30 + Math.random() * 200,
+      speed: Math.random() * 2 + 5,
+      rotation: Math.random() * 360,
+      rotationSpeed: Math.random() * 4,
+    }));
+
+    isAnimatingRef.current = true;
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      let isParticlesActive = false;
+      particles.forEach((p) => {
+        p.y += p.speed;
+        p.rotation += p.rotationSpeed;
+
+        if (p.y < canvas.height) isParticlesActive = true; // Check if any particle is still in view
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.drawImage(corgiImage, -p.size / 2, -p.size / 2, p.size, p.size);
+        ctx.restore();
+      });
+
+      if (isParticlesActive) {
+        requestAnimationFrame(animate);
+      } else {
+        isAnimatingRef.current = false; // Stop the animation once particles are out of view
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+      }
+    };
+
+    animate();
   };
 
   useEffect(() => {
-    if (score > 0) handleCorrectAnswer();
+    if (score > 0) launchCorgiConfetti();
   }, [score]);
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="relative">
-        <img
-          src="/killa.png"
-          alt="Corgi"
-          className={`transition-transform duration-500 ${corgiEating ? 'scale-110' : ''}`}
-          style={{ width: `${corgiSize}px`, height: `${corgiSize}px` }}
-        />
-        {corgiEating && (
-          <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-black px-2 py-1 rounded-lg animate-bounce">
-            Yum!
-          </div>
-        )}
-      </div>
+    <div className="relative">
+      <canvas
+        ref={canvasRef}
+        width={window.innerWidth}
+        height={window.innerHeight}
+        className="absolute top-0 left-0 pointer-events-none"
+      />
     </div>
   );
 }
