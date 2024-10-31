@@ -78,50 +78,74 @@
 //   );
 // }
 
-import { useEffect } from 'react';
-import confetti from 'canvas-confetti';
+import { useEffect, useRef } from 'react';
 
 interface CorgiProps {
   score: number;
 }
 
 export default function Corgi({ score }: CorgiProps) {
-
-  const handleCorrectAnswer = () => {
-    launchCorgiConfetti();
-  };
-
-  const launchCorgiConfetti = () => {
-    const count = 300;
-    const defaults = {
-      particleCount: 1,
-      spread: 55,
-      origin: { y: 0.6 }
-    };
-
-    for (let i = 0; i < count; i++) {
-      confetti({
-        ...defaults,
-        particleCount: 1,
-        // shapes: ['image'],
-        scalar: 1,
-        // image: {
-        //   src: '/killa.png',
-        //   width: 40,  // Adjust the width of each piece
-        //   height: 40  // Adjust the height of each piece
-        // },
-        angle: Math.random() * 360, // Random angle for each piece
-      });
-    }
-  };
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
-    if (score > 0) handleCorrectAnswer();
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const context = canvas.getContext('2d');
+    if (!context) return;
+
+    // Resize the canvas to fit the screen
+    const resizeCanvas = () => {
+      canvas.width = 350;
+      canvas.height = 700;
+    };
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Image for confetti
+    const image = new Image();
+    image.src = '/killa.png'; // Ensure the image is correctly accessible in public folder
+
+    image.onload = () => {
+
+      const particles = Array.from({ length: 1 }, () => ({
+        x: 200,
+        y: 600,
+        size: Math.random() * 20 + 150,
+        velocityX: (Math.random() - 0.5) * 4,
+        velocityY: Math.random() * -4,
+        rotation: Math.random() * 0,
+      }));
+
+      const animate = () => {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach((particle) => {
+          particle.x += particle.velocityX;
+          particle.y += particle.velocityY;
+          particle.velocityY += 0.1; // Gravity effect
+
+          // Draw the particle as an image
+          context.save();
+          context.translate(particle.x, particle.y);
+          context.rotate((particle.rotation * Math.PI) / 180);
+          context.drawImage(image, -particle.size / 2, -particle.size / 2, particle.size, particle.size);
+          context.restore();
+        });
+
+        requestAnimationFrame(animate);
+      };
+
+      animate();
+    };
+
+    // Clean up the event listener on component unmount
+    return () => window.removeEventListener('resize', resizeCanvas);
   }, [score]);
 
   return (
-    <div>
-
+    <div className="relative">
+      <canvas ref={canvasRef} className="absolute top-0 left-0 pointer-events-none" />
     </div>
   );
 }
