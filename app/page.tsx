@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
-// import Corgi from './components/CorgiAnimation';
+import Corgi from './components/CorgiAnimation';
 import CustomPinwheel from './components/CustomPinwheel';
 interface OptionData {
   option: string;
@@ -16,9 +16,9 @@ interface QuestionData {
   correctAnswer: string;
 }
 const data:OptionData[] = [
-  { option: 'audits', style: { backgroundColor: '#FF6B6B', textColor: 'white' } },
+  { option: 'Data Sites', style: { backgroundColor: '#FF6B6B', textColor: 'white' } },
   { option: 'financial-reports', style: { backgroundColor: '#4ECDC4', textColor: 'white' } },
-  { option: 'Data Sites', style: { backgroundColor: '#45B7D1', textColor: 'white' } },
+  { option: 'audits', style: { backgroundColor: '#45B7D1', textColor: 'white' } },
   { option: 'Budget', style: { backgroundColor: '#FFA07A', textColor: 'white' } },
 ];
 
@@ -34,11 +34,11 @@ export default function Home() {
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-
+// console.log(prizeNumber)
   const handleSpinClick = () => {
     if (!mustSpin) {
-      const newPrizeNumber = Math.floor(Math.random() * data.length);
-      setPrizeNumber(newPrizeNumber);
+      // const newPrizeNumber = Math.floor(Math.random() * data.length);
+      // setPrizeNumber(newPrizeNumber);
       setMustSpin(true);
       setError('');
     }
@@ -90,7 +90,7 @@ export default function Home() {
     
     <div className="p-6 min-h-screen flex flex-col items-center justify-center bg-black">
       <div className="bg-gray-800 shadow-xl rounded-lg p-6 w-full max-w-lg text-[#41ffca]">
-    {/* <Corgi score={score}/> */}
+    <Corgi score={score}/>
         <div className="text-3xl font-bold flex items-center justify-center mb-6">
           LA Controllers Trivia Challenge
         </div>
@@ -101,6 +101,7 @@ export default function Home() {
               mustSpin={mustSpin}
               data={data}
               onStopSpinning={() => setMustSpin(false)}
+              setPrizeName={setPrizeNumber}
             />
           </div>
         </div>

@@ -12,23 +12,18 @@ interface CustomPinwheelProps {
   data: OptionData[];
   mustSpin: boolean;
   onStopSpinning: (prize: string) => void;
+  setPrizeName: (prizeNumber: number) => void;
 }
 
 const CustomPinwheel: React.FC<CustomPinwheelProps> = ({
   data,
   mustSpin,
   onStopSpinning,
+  setPrizeName
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [corgiImage, setCorgiImage] = useState<HTMLImageElement | null>(null);
+  const [corgiRotationAngle, setCorgiRotationAngle] = useState(0);
   const spinDuration = 3000;
-
-  // Load the corgi image
-  useEffect(() => {
-    const img = new Image();
-    img.src = '/killa.png'; // Replace with your corgi image path
-    img.onload = () => setCorgiImage(img);
-  }, []);
 
   const drawWheel = (ctx: CanvasRenderingContext2D) => {
     const { width, height } = ctx.canvas;
@@ -56,93 +51,45 @@ const CustomPinwheel: React.FC<CustomPinwheelProps> = ({
     });
   };
 
-  const drawCorgi = (ctx: CanvasRenderingContext2D) => {
-    if (corgiImage) {
-      const { width, height } = ctx.canvas;
-      const centerX = width / 2;
-      const centerY = height / 2;
-      const corgiSize = 80; // Set the desired size for the corgi
-
-      ctx.drawImage(
-        corgiImage,
-        centerX - corgiSize / 2,
-        centerY - corgiSize / 2,
-        corgiSize,
-        corgiSize
-      );
-    }
-  };
-
-  const drawStickyIndicator = (ctx: CanvasRenderingContext2D) => {
-    const { width } = ctx.canvas;
-    const indicatorHeight = 20;
-    const centerX = width / 2;
-
-    ctx.fillStyle = '#FFD700';
-    ctx.beginPath();
-    ctx.moveTo(centerX - 10, 0); 
-    ctx.lineTo(centerX + 10, 0);
-    ctx.lineTo(centerX, -indicatorHeight); 
-    ctx.closePath();
-    ctx.fill();
-  };
-
-  useEffect(() => {
+  useEffect(() => { 
     const canvas = canvasRef.current;
     if (canvas) {
       const ctx = canvas.getContext('2d');
       if (ctx) {
         drawWheel(ctx);
-        drawCorgi(ctx);
-        drawStickyIndicator(ctx); 
       }
     }
-  }, [data, corgiImage]);
+  }, [data]);
 
   useEffect(() => {
     if (mustSpin) {
-      const canvas = canvasRef.current;
-      if (canvas) {
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          const { width, height } = ctx.canvas;
-          const centerX = width / 2;
-          const centerY = height / 2;
-          const startAngle = Math.random() * 2 * Math.PI; 
-          let startTime: number | null = null;
+      let startTime: number | null = null;
+      const startAngle = Math.random() * 2 * Math.PI;
 
-          const spin = (timestamp: number) => {
-            if (!startTime) startTime = timestamp;
-            const elapsed = timestamp - startTime;
+      const spinCorgi = (timestamp: number) => {
+        if (!startTime) startTime = timestamp;
+        const elapsed = timestamp - startTime;
 
-            const easeOut = (t: number) => t * (2 - t);
-            const progress = Math.min(elapsed / spinDuration, 1);
-            const easingProgress = easeOut(progress);
-            const rotation = startAngle + (2 * Math.PI * 4 * easingProgress); 
+        const easeOut = (t: number) => t * (2 - t);
+        const progress = Math.min(elapsed / spinDuration, 1);
+        const easingProgress = easeOut(progress);
+        const rotation = startAngle + (2 * Math.PI * 4 * easingProgress);
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.save();
-            ctx.translate(centerX, centerY);
-            ctx.rotate(rotation);
-            ctx.translate(-centerX, -centerY);
-            drawWheel(ctx);
-            drawCorgi(ctx); 
-            ctx.restore();
+        setCorgiRotationAngle(rotation);
 
-            drawStickyIndicator(ctx);
+        if (progress < 1) {
+          requestAnimationFrame(spinCorgi);
+        } else {
+          const finalAngle = rotation % (2 * Math.PI);
+          const sectionIndex = Math.floor(data.length - (finalAngle / (2 * Math.PI)) * data.length) % data.length;
 
-            if (progress < 1) {
-              requestAnimationFrame(spin);
-            } else {
-              const finalAngle = rotation % (2 * Math.PI);
-              const sectionIndex = Math.floor(data.length - (finalAngle / (2 * Math.PI)) * data.length) % data.length;
-              onStopSpinning(data[sectionIndex].option);
-            }
-          };
-
-          requestAnimationFrame(spin);
+          const selectedPrize = data[sectionIndex].option;
+          setPrizeName(sectionIndex);
+          onStopSpinning(selectedPrize);
         }
-      }
+      };
+
+      requestAnimationFrame(spinCorgi);
     }
   }, [mustSpin, onStopSpinning, data]);
 
@@ -152,15 +99,14 @@ const CustomPinwheel: React.FC<CustomPinwheelProps> = ({
       <div
         style={{
           position: 'absolute',
-          top: 0,
+          top: '-50px',
           left: '50%',
-          transform: 'translateX(-50%)',
+          transform: `translateX(-50%) rotate(${corgiRotationAngle}rad)`,
+          transformOrigin: 'center 250px',
           zIndex: 1,
         }}
       >
-        <svg width="20" height="20" style={{ marginBottom: '10px' }}>
-          <polygon points="20,20 20,0 0,10" fill="#FFD700" />
-        </svg>
+        <img src="/killa.png" height={80} width={80} />
       </div>
     </div>
   );
