@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 
 interface OptionData {
   option: string;
@@ -20,9 +20,15 @@ const CustomPinwheel: React.FC<CustomPinwheelProps> = ({
   onStopSpinning,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [corgiImage, setCorgiImage] = useState<HTMLImageElement | null>(null);
   const spinDuration = 3000;
-  const corgiImage = new Image();
-  corgiImage.src = '/killa.png';
+
+  // Load the corgi image
+  useEffect(() => {
+    const img = new Image();
+    img.src = '/killa.png'; // Replace with your corgi image path
+    img.onload = () => setCorgiImage(img);
+  }, []);
 
   const drawWheel = (ctx: CanvasRenderingContext2D) => {
     const { width, height } = ctx.canvas;
@@ -51,18 +57,20 @@ const CustomPinwheel: React.FC<CustomPinwheelProps> = ({
   };
 
   const drawCorgi = (ctx: CanvasRenderingContext2D) => {
-    const { width, height } = ctx.canvas;
-    const centerX = width / 2;
-    const centerY = height / 2;
-    const corgiSize = 80;
+    if (corgiImage) {
+      const { width, height } = ctx.canvas;
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const corgiSize = 80; // Set the desired size for the corgi
 
-    ctx.drawImage(
-      corgiImage,
-      centerX - corgiSize / 2,
-      centerY - corgiSize / 2,
-      corgiSize,
-      corgiSize
-    );
+      ctx.drawImage(
+        corgiImage,
+        centerX - corgiSize / 2,
+        centerY - corgiSize / 2,
+        corgiSize,
+        corgiSize
+      );
+    }
   };
 
   const drawStickyIndicator = (ctx: CanvasRenderingContext2D) => {
