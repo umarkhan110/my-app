@@ -16,9 +16,9 @@ interface QuestionData {
   correctAnswer: string;
 }
 const data:OptionData[] = [
-  { option: 'Data Sites', style: { backgroundColor: '#FF6B6B', textColor: 'white' } },
+  { option: 'audits', style: { backgroundColor: '#FF6B6B', textColor: 'white' } },
   { option: 'financial-reports', style: { backgroundColor: '#4ECDC4', textColor: 'white' } },
-  { option: 'audits', style: { backgroundColor: '#45B7D1', textColor: 'white' } },
+  { option: 'Data Sites', style: { backgroundColor: '#45B7D1', textColor: 'white' } },
   { option: 'Budget', style: { backgroundColor: '#FFA07A', textColor: 'white' } },
 ];
 
