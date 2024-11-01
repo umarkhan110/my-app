@@ -90,7 +90,7 @@ export default function Home() {
     
     <div className="p-6 min-h-screen flex flex-col items-center justify-center bg-black">
       <div className="bg-gray-800 shadow-xl rounded-lg p-6 w-full max-w-lg text-[#41ffca]">
-    <Corgi score={score}/>
+    {/* <Corgi score={score}/> */}
         <div className="text-3xl font-bold flex items-center justify-center mb-6">
           LA Controllers Trivia Challenge
         </div>

@@ -21,6 +21,8 @@ const CustomPinwheel: React.FC<CustomPinwheelProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const spinDuration = 3000;
+  const corgiImage = new Image();
+  corgiImage.src = '/killa.png';
 
   const drawWheel = (ctx: CanvasRenderingContext2D) => {
     const { width, height } = ctx.canvas;
@@ -48,6 +50,21 @@ const CustomPinwheel: React.FC<CustomPinwheelProps> = ({
     });
   };
 
+  const drawCorgi = (ctx: CanvasRenderingContext2D) => {
+    const { width, height } = ctx.canvas;
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const corgiSize = 80;
+
+    ctx.drawImage(
+      corgiImage,
+      centerX - corgiSize / 2,
+      centerY - corgiSize / 2,
+      corgiSize,
+      corgiSize
+    );
+  };
+
   const drawStickyIndicator = (ctx: CanvasRenderingContext2D) => {
     const { width } = ctx.canvas;
     const indicatorHeight = 20;
@@ -68,10 +85,11 @@ const CustomPinwheel: React.FC<CustomPinwheelProps> = ({
       const ctx = canvas.getContext('2d');
       if (ctx) {
         drawWheel(ctx);
+        drawCorgi(ctx);
         drawStickyIndicator(ctx); 
       }
     }
-  }, [data]);
+  }, [data, corgiImage]);
 
   useEffect(() => {
     if (mustSpin) {
@@ -89,7 +107,6 @@ const CustomPinwheel: React.FC<CustomPinwheelProps> = ({
             if (!startTime) startTime = timestamp;
             const elapsed = timestamp - startTime;
 
-            // Ease out function
             const easeOut = (t: number) => t * (2 - t);
             const progress = Math.min(elapsed / spinDuration, 1);
             const easingProgress = easeOut(progress);
@@ -101,16 +118,16 @@ const CustomPinwheel: React.FC<CustomPinwheelProps> = ({
             ctx.rotate(rotation);
             ctx.translate(-centerX, -centerY);
             drawWheel(ctx);
+            drawCorgi(ctx); 
             ctx.restore();
 
-            drawStickyIndicator(ctx); 
+            drawStickyIndicator(ctx);
 
             if (progress < 1) {
               requestAnimationFrame(spin);
             } else {
               const finalAngle = rotation % (2 * Math.PI);
               const sectionIndex = Math.floor(data.length - (finalAngle / (2 * Math.PI)) * data.length) % data.length;
-
               onStopSpinning(data[sectionIndex].option);
             }
           };

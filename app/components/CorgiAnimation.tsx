@@ -94,7 +94,6 @@ export default function Corgi({ score }: CorgiProps) {
     const context = canvas.getContext('2d');
     if (!context) return;
 
-    // Resize the canvas to fit the screen
     const resizeCanvas = () => {
       canvas.width = 350;
       canvas.height = 700;
@@ -102,9 +101,8 @@ export default function Corgi({ score }: CorgiProps) {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Image for confetti
     const image = new Image();
-    image.src = '/killa.png'; // Ensure the image is correctly accessible in public folder
+    image.src = '/killa.png';
 
     image.onload = () => {
 
@@ -123,9 +121,8 @@ export default function Corgi({ score }: CorgiProps) {
         particles.forEach((particle) => {
           particle.x += particle.velocityX;
           particle.y += particle.velocityY;
-          particle.velocityY += 0.1; // Gravity effect
+          particle.velocityY += 0.1; 
 
-          // Draw the particle as an image
           context.save();
           context.translate(particle.x, particle.y);
           context.rotate((particle.rotation * Math.PI) / 180);
@@ -138,8 +135,6 @@ export default function Corgi({ score }: CorgiProps) {
 
       animate();
     };
-
-    // Clean up the event listener on component unmount
     return () => window.removeEventListener('resize', resizeCanvas);
   }, [score]);
 
