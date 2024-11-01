@@ -94,12 +94,12 @@ export default function Corgi({ score }: CorgiProps) {
     const context = canvas.getContext('2d');
     if (!context) return;
 
-    const resizeCanvas = () => {
-      canvas.width = 350;
-      canvas.height = 700;
-    };
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    // const resizeCanvas = () => {
+    //   canvas.width = 350;
+    //   canvas.height = 700;
+    // };
+    // resizeCanvas();
+    // window.addEventListener('resize', resizeCanvas);
 
     const image = new Image();
     image.src = '/killa.png';
@@ -135,7 +135,7 @@ export default function Corgi({ score }: CorgiProps) {
 
       animate();
     };
-    return () => window.removeEventListener('resize', resizeCanvas);
+    // return () => window.removeEventListener('resize', resizeCanvas);
   }, [score]);
 
   return (
