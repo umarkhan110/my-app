@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Corgi from './components/CorgiAnimation';
 import CustomPinwheel from './components/CustomPinwheel';
 interface OptionData {
+  key: number,
   option: string;
   style: {
     backgroundColor: string;
@@ -16,10 +17,10 @@ interface QuestionData {
   correctAnswer: string;
 }
 const data:OptionData[] = [
-  { option: 'audits', style: { backgroundColor: '#FF6B6B', textColor: 'white' } },
-  { option: 'financial-reports', style: { backgroundColor: '#4ECDC4', textColor: 'white' } },
-  { option: 'Data Sites', style: { backgroundColor: '#45B7D1', textColor: 'white' } },
-  { option: 'Budget', style: { backgroundColor: '#FFA07A', textColor: 'white' } },
+  { key: 1, option: 'audits', style: { backgroundColor: '#FF6B6B', textColor: 'white' } },
+  { key: 2, option: 'financial-reports', style: { backgroundColor: '#4ECDC4', textColor: 'white' } },
+  { key: 3, option: 'Data Sites', style: { backgroundColor: '#45B7D1', textColor: 'white' } },
+  { key: 4, option: 'Budget', style: { backgroundColor: '#FFA07A', textColor: 'white' } },
 ];
 
 export default function Home() {
@@ -34,7 +35,7 @@ export default function Home() {
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-// console.log(prizeNumber)
+console.log(prizeNumber)
   const handleSpinClick = () => {
     if (!mustSpin) {
       // const newPrizeNumber = Math.floor(Math.random() * data.length);
@@ -68,11 +69,11 @@ export default function Home() {
 
   useEffect(() => {
     if (!mustSpin) {
-      const category = data[prizeNumber].option;
-      setCurrentCategory(category);
+      const category = data.find(item => item.key === prizeNumber) || data[0];
+      setCurrentCategory(category?.option);
       setUserAnswer("");
       setShowAnswer(false);
-      fetchQuestion(category);
+      fetchQuestion(category?.option);
     }
   }, [mustSpin, prizeNumber]);
 

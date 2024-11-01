@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 
 interface OptionData {
+  key: number; // Keep the key for each option
   option: string;
   style: {
     backgroundColor: string;
@@ -19,8 +20,9 @@ const CustomPinwheel: React.FC<CustomPinwheelProps> = ({
   data,
   mustSpin,
   onStopSpinning,
-  setPrizeName
+  setPrizeName,
 }) => {
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [corgiRotationAngle, setCorgiRotationAngle] = useState(0);
   const spinDuration = 3000;
@@ -34,6 +36,7 @@ const CustomPinwheel: React.FC<CustomPinwheelProps> = ({
     ctx.font = '800 16px sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
+
     data.forEach((item, index) => {
       ctx.beginPath();
       ctx.moveTo(centerX, centerY);
@@ -80,11 +83,24 @@ const CustomPinwheel: React.FC<CustomPinwheelProps> = ({
         if (progress < 1) {
           requestAnimationFrame(spinCorgi);
         } else {
-          const finalAngle = rotation % (2 * Math.PI);
-          const sectionIndex = Math.floor(data.length - (finalAngle / (2 * Math.PI)) * data.length) % data.length;
+          const finalAngle = (rotation * (180 / Math.PI)) % 360; // Normalize to 0-360 degrees
+          let sectionIndex;
+console.log(finalAngle)
+          // Determine which section based on the final angle
+          if (finalAngle >= 0 && finalAngle < 90) {
+            sectionIndex = 3; // Budget
+          } else if (finalAngle >= 90 && finalAngle < 180) {
+            sectionIndex = 0; // Data Sites
+          } else if (finalAngle >= 180 && finalAngle < 270) {
+            sectionIndex = 1; // Financial Reports
+          } else {
+            sectionIndex = 2; // Audits
+          }
 
           const selectedPrize = data[sectionIndex].option;
-          setPrizeName(sectionIndex);
+          const selectedKey = data[sectionIndex].key; // Key of the selected option
+
+          setPrizeName(selectedKey); // Use key for prize number
           onStopSpinning(selectedPrize);
         }
       };
