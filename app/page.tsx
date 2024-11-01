@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
-import Corgi from './components/CorgiAnimation';
+// import Corgi from './components/CorgiAnimation';
 import CustomPinwheel from './components/CustomPinwheel';
 interface OptionData {
   option: string;
